@@ -1,40 +1,49 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import csv
-from datetime import datetime
+import json
+import os
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+CORS(app)
+
+DATA_FILE = "data.json"
 
 
-CSV_FILE = 'training_data.csv'
+def load_data():
+    """Lädt die Trainingslogs aus der JSON-Datei."""
+    if not os.path.exists(DATA_FILE):
+        return []
+    with open(DATA_FILE, "r", encoding="utf-8") as f:
+        try:
+            return json.load(f)
+        except json.JSONDecodeError:
+            return []
+
+
+def save_data(data):
+    """Speichert die Trainingslogs in die JSON-Datei."""
+    with open(DATA_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
 
 @app.route("/api/log", methods=["POST"])
-def log_training():
-    data = request.get_json()
-    with open(CSV_FILE, mode="a", newline="") as file:
-        writer = csv.writer(file)
-        writer.writerow([
-            data.get("date", datetime.now().isoformat()),
-            data["exercise"],
-            data["weight"],
-            data["reps"]
-        ])
-    return jsonify({"status": "ok"}), 200
+def add_log():
+    entry = request.get_json()
+
+    if not entry or not all(k in entry for k in ("date", "exercise", "weight", "reps")):
+        return jsonify({"error": "Invalid data"}), 400
+
+    data = load_data()
+    data.append(entry)
+    save_data(data)
+    return jsonify({"status": "success"}), 201
+
 
 @app.route("/api/logs", methods=["GET"])
 def get_logs():
-    try:
-        with open(CSV_FILE, mode="r") as file:
-            reader = csv.reader(file)
-            logs = [
-                {"date": row[0], "exercise": row[1], "weight": row[2], "reps": row[3]}
-                for row in reader
-            ]
-        return jsonify(logs)
-    except FileNotFoundError:
-        return jsonify([])
+    data = load_data()
+    return jsonify(data)
+
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0")
-
+    app.run(host="0.0.0.0", port=5000, debug=True)

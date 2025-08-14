@@ -1,57 +1,18 @@
-<script lang="ts">
-	import Header from './Header.svelte';
-	import '../app.css';
-
-	let { children } = $props();
+<script>
+	import { page } from '$app/stores';
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js');
+    }
 </script>
 
 <div class="app">
-	<Header />
+	<h1>🏋️ Training Tracker</h1>
 
-	<main>
-		{@render children()}
-	</main>
+	<nav class="menu">
+		<a href="/" class:selected={$page.url.pathname === "/"}>📋 Logs</a>
+		<a href="/exercises" class:selected={$page.url.pathname === "/exercises"}>🏋️ Übungen</a>
+		<a href="/stats" class:selected={$page.url.pathname === "/stats"}>📊 Auswertung</a>
+	</nav>
 
-	<footer>
-		<p>
-			visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to learn about SvelteKit
-		</p>
-	</footer>
+	<slot />
 </div>
-
-<style>
-	.app {
-		display: flex;
-		flex-direction: column;
-		min-height: 100vh;
-	}
-
-	main {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		padding: 1rem;
-		width: 100%;
-		max-width: 64rem;
-		margin: 0 auto;
-		box-sizing: border-box;
-	}
-
-	footer {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		padding: 12px;
-	}
-
-	footer a {
-		font-weight: bold;
-	}
-
-	@media (min-width: 480px) {
-		footer {
-			padding: 12px 0;
-		}
-	}
-</style>

@@ -1,0 +1,117 @@
+[
+  {
+    "id": 1,
+    "name": "Bankdrücken",
+    "category": "Brust",
+    "equipment": "Langhantel",
+    "muscles": [
+      "Brust",
+      "Trizeps",
+      "Schultern"
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Kniebeuge",
+    "category": "Beine",
+    "equipment": "Langhantel",
+    "muscles": [
+      "Quadrizeps",
+      "Gluteus",
+      "Rückenstrecker"
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Kreuzheben",
+    "category": "Rücken",
+    "equipment": "Langhantel",
+    "muscles": [
+      "Rücken",
+      "Gluteus",
+      "Beinbeuger"
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Schulterdrücken",
+    "category": "Schultern",
+    "equipment": "Kurzhanteln",
+    "muscles": [
+      "Schultern",
+      "Trizeps"
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Klimmzüge",
+    "category": "Rücken",
+    "equipment": "Klimmzugstange",
+    "muscles": [
+      "Latissimus",
+      "Bizeps",
+      "Unterarme"
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Dips",
+    "category": "Arme",
+    "equipment": "Barren",
+    "muscles": [
+      "Trizeps",
+      "Brust",
+      "Schultern"
+    ]
+  },
+  {
+    "id": 7,
+    "name": "Bizepscurls",
+    "category": "Arme",
+    "equipment": "Kurzhanteln",
+    "muscles": [
+      "Bizeps"
+    ]
+  },
+  {
+    "id": 8,
+    "name": "Ausfallschritte",
+    "category": "Beine",
+    "equipment": "Kurzhanteln",
+    "muscles": [
+      "Quadrizeps",
+      "Gluteus",
+      "Beinbeuger"
+    ]
+  },
+  {
+    "id": 9,
+    "name": "Wadenheben",
+    "category": "Beine",
+    "equipment": "Körpergewicht",
+    "muscles": [
+      "Waden"
+    ]
+  },
+  {
+    "id": 10,
+    "name": "Plank",
+    "category": "Core",
+    "equipment": "Körpergewicht",
+    "muscles": [
+      "Bauch",
+      "Rumpf",
+      "Schultern"
+    ]
+  },
+  {
+    "name": "Russian Twist",
+    "category": "Core",
+    "equipment": "Körpergewicht",
+    "muscles": [
+      "Bauch",
+      "Rumpf"
+    ],
+    "id": 11
+  }
+]

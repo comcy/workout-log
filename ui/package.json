@@ -48,6 +48,7 @@
 	"dependencies": {
 		"@sveltejs/adapter-static": "^3.0.9",
 		"@vite-pwa/sveltekit": "^1.0.0",
+		"chart.js": "^4.5.0",
 		"vite-plugin-pwa": "^1.0.2"
 	}
 }

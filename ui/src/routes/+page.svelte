@@ -1,65 +1,129 @@
 <script>
-	import { onMount } from "svelte";
+  import { onMount } from "svelte";
 
-	const API_URL = "http://192.168.x.x:5000/api";
+  let workouts = [];
+  let exercises = [];
 
-	let date = new Date().toISOString().split("T")[0];
-	let exercise_id = "";
-	let weight = "";
-	let reps = "";
-	let logs = [];
-	let exercises = [];
+  // Eingabe-Felder
+  let selectedExerciseId = "";
+  let weight = "";
+  let reps = "";
+  let date = new Date().toISOString().split("T")[0];
 
-	async function loadLogs() {
-		const res = await fetch(`${API_URL}/logs`);
-		logs = await res.json();
-	}
+  const API_URL = "http://127.0.0.1:5000";
 
-	async function loadExercises() {
-		const res = await fetch(`${API_URL}/exercises`);
-		exercises = await res.json();
-		if (exercises.length > 0 && !exercise_id) {
-			exercise_id = exercises[0].id;
-		}
-	}
+  // Workouts laden
+  async function loadWorkouts() {
+    try {
+      const res = await fetch(`${API_URL}/workouts`);
+      if (!res.ok) throw new Error("Fehler beim Laden");
+      workouts = await res.json();
+    } catch (err) {
+      console.error("Fehler beim Laden der Workouts:", err);
+    }
+  }
 
-	async function saveLog() {
-		const entry = { date, exercise_id, weight, reps };
-		await fetch(`${API_URL}/log`, {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify(entry)
-		});
-		weight = "";
-		reps = "";
-		loadLogs();
-	}
+  // Übungen laden
+  async function loadExercises() {
+    try {
+      const res = await fetch(`${API_URL}/exercises`);
+      if (!res.ok) throw new Error("Fehler beim Laden");
+      exercises = await res.json();
+    } catch (err) {
+      console.error("Fehler beim Laden der Übungen:", err);
+    }
+  }
 
-	onMount(() => {
-		loadExercises();
-		loadLogs();
-	});
+  // Neues Workout speichern
+  async function addWorkout() {
+    if (!selectedExerciseId) {
+      alert("Bitte eine Übung auswählen");
+      return;
+    }
+
+    const newWorkout = {
+      exercise_id: parseInt(selectedExerciseId),
+      weight,
+      reps,
+      date
+    };
+
+    try {
+      const res = await fetch(`${API_URL}/workouts/add`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newWorkout)
+      });
+
+      if (!res.ok) throw new Error("Fehler beim Speichern");
+
+      const result = await res.json();
+      workouts = [...workouts, result.workout];
+
+      // Eingabe leeren
+      selectedExerciseId = "";
+      weight = "";
+      reps = "";
+      date = new Date().toISOString().split("T")[0];
+    } catch (err) {
+      console.error("Fehler beim Speichern:", err);
+    }
+  }
+
+  onMount(() => {
+    loadWorkouts();
+    loadExercises();
+  });
 </script>
 
-<h2>📋 Logs</h2>
+<h1 class="text-xl font-bold mb-4">Workouts</h1>
 
-<form on:submit|preventDefault={saveLog}>
-	<label>Datum: <input type="date" bind:value={date} /></label><br />
-	<label>Übung:
-		<select bind:value={exercise_id}>
-			{#each exercises as ex}
-				<option value={ex.id}>{ex.name}</option>
-			{/each}
-		</select>
-	</label><br />
-	<label>Gewicht: <input type="number" bind:value={weight} /></label><br />
-	<label>Wdh.: <input type="number" bind:value={reps} /></label><br />
-	<button type="submit">Speichern</button>
-</form>
+<!-- Formular -->
+<div class="p-4 border rounded-lg mb-6">
+  <h2 class="font-semibold mb-2">Neues Workout eintragen</h2>
 
-<hr />
-<ul>
-	{#each logs as log}
-		<li>{log.date} – {log.exercise_id} → {log.weight} kg × {log.reps}</li>
-	{/each}
+  <select class="border p-2 mr-2 mb-2" bind:value={selectedExerciseId}>
+    <option value="">-- Übung wählen --</option>
+    {#each exercises as ex}
+      <option value={ex.id}>{ex.name}</option>
+    {/each}
+  </select>
+
+  <input
+    class="border p-2 mr-2 mb-2"
+    placeholder="Gewicht (kg)"
+    type="number"
+    bind:value={weight}
+  />
+  <input
+    class="border p-2 mr-2 mb-2"
+    placeholder="Wiederholungen"
+    type="number"
+    bind:value={reps}
+  />
+  <input
+    class="border p-2 mr-2 mb-2"
+    type="date"
+    bind:value={date}
+  />
+
+  <button
+    class="bg-green-500 text-white px-4 py-2 rounded"
+    on:click={addWorkout}
+  >
+    Speichern
+  </button>
+</div>
+
+<!-- Liste -->
+<h2 class="font-semibold mb-2">Alle Workouts</h2>
+<ul class="list-disc pl-5">
+  {#each workouts as workout}
+    <li>
+      {#if exercises.length > 0}
+        {exercises.find(ex => ex.id === workout.exercise_id)?.name || "?"}
+      {/if}
+      – {workout.weight}kg × {workout.reps} am {workout.date}
+    </li>
+  {/each}
 </ul>
